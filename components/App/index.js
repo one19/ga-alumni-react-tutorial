@@ -1,56 +1,65 @@
 import React, { Component } from 'react';
 import styles from './styles.css';
+import ProfilePicture from '../ProfilePicture';
+import Shout from '../Shout';
+import _ from 'lodash';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      shoutBar: '',
+      shouts: [
+        {name: 'Phil', text: 'YO!!!', imageUrl: 'http://www.fillmurray.com/100/100'},
+        {name: 'Phil', text: 'YO!!!', imageUrl: 'http://www.fillmurray.com/100/100'}
+      ]
+    }
+  }
+
+  updateShoutBar(text) {
+    this.setState({
+      shoutBar: text
+    });
+  }
+
+  addShout(e, text) {
+    e.preventDefault();
+    if (text === '') throw 'No Text Entered';
+    const capText = _.upperCase(text);
+    this.updateShoutBar('');
+
+    this.setState({
+      shouts: [
+        ...this.state.shouts,
+        {name: 'Phil', text: capText, imageUrl: 'http://www.fillmurray.com/100/100'}
+      ]
+    })
   }
 
   render() {
     return (
       <div className={styles.app}>
-        <div className={styles.profilePicture}>
-          <img src={'http://www.fillmurray.com/100/100'} alt=""/>
-        </div>
+      <ProfilePicture imageUrl='http://www.fillmurray.com/100/100' />
         <div className={styles.feed}>
-          <div className={styles.shoutBar}>
+          <form
+            className={styles.shoutBar}
+            onSubmit={ e => this.addShout(e, this.state.shoutBar) }
+          >
             <input
               type="text"
               className={styles.shoutInput}
               placeholder="Shout something..."
+              onChange={ e => this.updateShoutBar(e.target.value) }
+              value={this.state.shoutBar}
             />
-            <div
+            <button
+              type="submit"
               className={styles.shoutButton}
             >
               SHOUT!
-            </div>
-          </div>
-          <div className={styles.shout}>
-            <div className={`${styles.profilePicture} ${styles.profilePictureSmall}`}>
-              <img src={'http://www.fillmurray.com/100/100'} alt=""/>
-            </div>
-            <div className={styles.shoutBody}>
-              <div className={styles.username}>Phil</div>
-              <div className={styles.shoutText}>TODAY IS TOMORROW. IT HAPPENED!!!</div>
-              <div className={styles.shoutActions}>
-                <span className={styles.shoutHeart}>♡</span>
-                <span className={styles.shoutComment}>comment</span>
-              </div>
-            </div>
-          </div>
-          <div className={styles.shout}>
-            <div className={`${styles.profilePicture} ${styles.profilePictureSmall}`}>
-              <img src={'http://www.fillmurray.com/100/100'} alt=""/>
-            </div>
-            <div className={styles.shoutBody}>
-              <div className={styles.username}>Phil</div>
-              <div className={styles.shoutText}>WELL, WHAT IF THERE IS NO TOMORROW?!!!</div>
-              <div className={styles.shoutActions}>
-                <span className={styles.shoutHeart}>♡</span>
-                <span className={styles.shoutComment}>comment</span>
-              </div>
-            </div>
-          </div>
+            </button>
+          </form>
+          { _.map(this.state.shouts, shout => <Shout {...shout} /> )}
         </div>
       </div>
     )
